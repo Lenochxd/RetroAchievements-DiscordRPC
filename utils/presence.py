@@ -1,5 +1,6 @@
 import re
 from utils import get_config
+from utils.retroachievements import get_game_icon
 
 config = get_config()
 
@@ -19,7 +20,7 @@ def update_presence(RPC, data, game_data, start_time):
         state=data["RichPresenceMsg"],
         details=details,
         start=start_time,
-        large_image="ra_logo",
+        large_image=get_game_icon(game_data),
         large_text=f"Released {game_data['Released']}, Developed by {game_data['Developer']}, Published by {game_data['Publisher']}",
         small_image=sanitize_console_name(game_data['ConsoleName']),
         small_text=game_data['ConsoleName'],
