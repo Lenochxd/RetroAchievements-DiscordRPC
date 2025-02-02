@@ -1,0 +1,24 @@
+# configuration files
+config.yml
+.vscode/settings.json
+
+# virtual environment directory
+venv
+
+# compiled files
+build/
+dist/
+*.dll
+*.exe
+
+# Cache files
+__pycache__/
+*.pyc
+
+# backup files
+*copy.*
+
+# misc
+.logs/*
+.DS_Store
+tests/*
