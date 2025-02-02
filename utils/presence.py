@@ -1,12 +1,7 @@
 import re
 
 def get_release_year(release_date):
-    # RA Games don't all have full dates, but they follow a consistent pattern where the year is the last token:
-    # -- Year 
-    # -- Month Year
-    # -- Month Day, Year 
-    tokens = release_date.split(' ')
-    return tokens[len(tokens) - 1]
+    return release_date.split()[-1][:4]
 
 def sanitize_console_name(console_name):
     sanitized_name = re.sub('[^0-9a-zA-Z]+', '', console_name)
