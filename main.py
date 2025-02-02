@@ -35,7 +35,7 @@ def main():
         log.debug(f"Game Title: {game_data['GameTitle']}")
         log.debug(f"Game data: {game_data}")
 
-        update_presence(RPC, data, game_data, start_time, username)
+        update_presence(RPC, data, game_data, start_time)
 
         log.debug(f"Sleeping for {get_arg('fetch')} seconds...")
         time.sleep(get_arg("fetch"))
