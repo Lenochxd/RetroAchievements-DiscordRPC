@@ -1,14 +1,21 @@
-from pypresence import Presence 
 import time
+import threading
+from pypresence import Presence 
 from utils import get_config, log, parse_args, get_arg, update_presence
 from utils.retroachievements import get_profile_data, get_game_data
 
 parse_args()
+config = get_config()
 
+
+def initialize_tray_icon():
+    from tray import create_tray_icon
+    try:
+        create_tray_icon()
+    except Exception as e:
+        log.exception(e, "Failed to initialize tray icon", expected=False)
 
 def main():
-    config = get_config()
-    
     username = config.get('ra_username')
     api_key = config.get('ra_api_key')
     client_id = config.get('discord_client_id')
@@ -39,4 +46,9 @@ def main():
         time.sleep(get_arg("fetch"))
 
 if __name__ == "__main__":
-    main()
+    # Start the RPC thread
+    rpc_thread = threading.Thread(target=main, daemon=True)
+    rpc_thread.start()
+    
+    # Start the tray icon
+    initialize_tray_icon()
