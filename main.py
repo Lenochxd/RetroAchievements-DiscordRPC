@@ -17,8 +17,6 @@ def main():
 
     profile_url = f"https://retroachievements.org/API/API_GetUserProfile.php?u={username}&y={api_key}&z={username}"
 
-    start_time = int(time.time())
-
     RPC = Presence(client_id)
     log.info("Connecting to Discord App...")
     RPC.connect()
@@ -35,7 +33,7 @@ def main():
         log.debug(f"Game Title: {game_data['GameTitle']}")
         log.debug(f"Game data: {game_data}")
 
-        update_presence(RPC, data, game_data, start_time)
+        update_presence(RPC, data, game_data)
 
         log.debug(f"Sleeping for {get_arg('fetch')} seconds...")
         time.sleep(get_arg("fetch"))
