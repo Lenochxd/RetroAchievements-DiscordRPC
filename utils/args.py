@@ -1,7 +1,11 @@
+# Source: https://github.com/Lenochxd/WebDeck/blob/master/app/utils/args.py
+
 import sys
 import argparse
 from .logger import log
+from utils.get_config import get_config
 
+config = get_config()
 args = {}
 raw_args = [arg for arg in sorted(sys.argv[1:]) if not (arg.endswith('.pyc') or arg.endswith('library.zip'))]
 # log.debug(f"{raw_args=}")
@@ -16,7 +20,7 @@ available_args = {
         "aliases": ["--fetch", "--time"],
         "help": "Time to sleep before fetches in seconds",
         "type": int,
-        "default": 30,
+        "default": config.get('sleeping_time', 10),
         "action": "store"
     },
 }
