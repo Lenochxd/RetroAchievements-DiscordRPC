@@ -20,6 +20,14 @@ def get_large_text(game_data: dict) -> str:
     
     return ", ".join(parts) if parts else None
 
+def get_state(data: dict) -> str | None:
+    state = data.get("RichPresenceMsg", "").strip()
+
+    if state and not state.lower().startswith(f'playing {actual_game_title.lower()}'):
+        return state
+    return None
+
+
 start_time = time.time()
 actual_game_title = ""
     
@@ -34,7 +42,7 @@ def update_presence(RPC, data, game_data):
     details = f"{game_data['GameTitle']} ({year_of_release})"
     
     RPC.update(
-        state=data["RichPresenceMsg"],
+        state=get_state(data),
         details=details,
         start=start_time,
         large_image=get_game_icon(game_data),
