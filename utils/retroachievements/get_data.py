@@ -1,9 +1,7 @@
 import requests
-from typing import Union
-from types import NoneType
 from ..logger import log
 
-def get_http(url: str) -> Union[dict, NoneType]:
+def get_http(url: str) -> dict | None:
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -12,11 +10,11 @@ def get_http(url: str) -> Union[dict, NoneType]:
         return None
 
 
-def get_profile_data(profile_url: str) -> Union[dict, NoneType]:
+def get_profile_data(profile_url: str) -> dict | None:
     log.debug(f"Fetching RetroAchievements activity...")
     return get_http(profile_url)
 
-def get_game_data(username: str, game_id: str, api_key: str) -> Union[dict, NoneType]:
+def get_game_data(username: str, game_id: str, api_key: str) -> dict | None:
     game_params = f"?z={username}&i={game_id}&y={api_key}"
     game_url = f"https://retroachievements.org/API/API_GetGame.php{game_params}"
     log.debug("Fetching game data...")
