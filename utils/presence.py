@@ -8,6 +8,17 @@ config = get_config()
 def get_release_year(release_date: str) -> str:
     return release_date.split()[-1][:4]
 
+def get_large_text(game_data: dict) -> str:
+    parts = []
+    
+    if "Released" in game_data and game_data["Released"]:
+        parts.append(f"Released {game_data['Released']}")
+    if "Developer" in game_data and game_data["Developer"]:
+        parts.append(f"Developed by {game_data['Developer']}")
+    if "Publisher" in game_data and game_data["Publisher"]:
+        parts.append(f"Published by {game_data['Publisher']}")
+    
+    return ", ".join(parts) if parts else None
 
 start_time = time.time()
 actual_game_title = ""
@@ -27,7 +38,7 @@ def update_presence(RPC, data, game_data):
         details=details,
         start=start_time,
         large_image=get_game_icon(game_data),
-        large_text=f"Released {game_data['Released']}, Developed by {game_data['Developer']}, Published by {game_data['Publisher']}",
+        large_text=get_large_text(game_data),
         small_image=get_console_icon(game_data['ConsoleID']),
         small_text=game_data['ConsoleName'],
         buttons=[{"label": "View RA Profile", "url": f"https://retroachievements.org/user/{data.get('User', config.get('ra_username'))}"}]
