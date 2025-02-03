@@ -19,7 +19,7 @@ def main():
     username = config.get('ra_username')
     api_key = config.get('ra_api_key')
     client_id = config.get('discord_client_id')
-    if client_id == "-1" or not config.has_option('client_id'):
+    if not client_id or client_id == "-1":
         client_id = "1249693940299333642"
 
     profile_url = f"https://retroachievements.org/API/API_GetUserProfile.php?u={username}&y={api_key}&z={username}"
