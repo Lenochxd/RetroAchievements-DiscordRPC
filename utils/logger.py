@@ -32,7 +32,7 @@ class Logger:
         """
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_message = f"[{level} @ {timestamp}] - {message}"
-        with open(self.log_file, 'a') as file:
+        with open(self.log_file, 'a', encoding='utf-8') as file:
             file.write(log_message + '\n')
         return log_message
     
