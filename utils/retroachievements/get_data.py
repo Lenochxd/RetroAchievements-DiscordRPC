@@ -10,9 +10,10 @@ def get_http(url: str) -> dict | None:
         return None
 
 
-def get_profile_data(profile_url: str) -> dict | None:
+def get_profile_data(username: str, api_key: str) -> dict | None:
     log.debug(f"Fetching RetroAchievements activity...")
-    return get_http(profile_url)
+    url = f"https://retroachievements.org/API/API_GetUserSummary.php?u={username}&y={api_key}&a=0&g=0"
+    return get_http(url)
 
 def get_game_data(username: str, game_id: str, api_key: str) -> dict | None:
     game_params = f"?z={username}&i={game_id}&y={api_key}"

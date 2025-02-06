@@ -1,5 +1,5 @@
 import time
-from utils import get_config
+from utils import get_config, log
 from utils.retroachievements import get_game_icon, get_console_icon
 
 config = get_config()
@@ -40,6 +40,11 @@ def update_presence(RPC, data, game_data):
     
     year_of_release = get_release_year(game_data['Released'])
     details = f"{game_data['GameTitle']} ({year_of_release})"
+    
+    if data.get("Status", "") == "Offline":
+        log.debug("User is offline, clearing presence...")
+        RPC.clear()
+        return
     
     RPC.update(
         state=get_state(data),

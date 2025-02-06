@@ -22,15 +22,13 @@ def main():
     if not client_id or client_id == "-1":
         client_id = "1249693940299333642"
 
-    profile_url = f"https://retroachievements.org/API/API_GetUserProfile.php?u={username}&y={api_key}&z={username}"
-
     RPC = Presence(client_id)
     log.info("Connecting to Discord App...")
     RPC.connect()
     log.success("Connected!")
 
     while True:
-        data = get_profile_data(profile_url)
+        data = get_profile_data(username, api_key)
         game_data = get_game_data(username, data.get('LastGameID'), api_key)
         if not data or not game_data:
             log.warning("Failed to retrieve data...")
