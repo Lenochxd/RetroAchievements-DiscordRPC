@@ -1,8 +1,24 @@
 import time
+from pypresence import Presence
 from utils import get_config, log
 from utils.retroachievements import get_game_icon, get_console_icon
 
 config = get_config()
+
+def update_rpc_client_id(new_client_id: int, RPC: Presence) -> Presence:
+    if RPC and int(RPC.client_id) == new_client_id:
+        log.debug("Client ID hasn't changed, skipping...")
+        return RPC
+
+    if RPC:
+        log.debug("Closing connection with old client ID...")
+        RPC.close()
+
+    RPC = Presence(new_client_id)
+    log.info("Updating client ID...")
+    RPC.connect()
+    log.success(f"Connected with new client ID! ({new_client_id})")
+    return RPC
 
 
 def get_release_year(release_date: str) -> str:

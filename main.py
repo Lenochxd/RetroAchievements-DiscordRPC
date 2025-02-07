@@ -1,11 +1,11 @@
 import time
 import threading
-from pypresence import Presence 
+from pypresence import Presence
 from utils import get_config, log, parse_args, get_arg, update_presence
 from utils.retroachievements import get_profile_data, get_game_data
+from utils.presence import update_presence, update_rpc_client_id
 
 parse_args()
-config = get_config()
 
 
 def initialize_tray_icon():
@@ -16,9 +16,11 @@ def initialize_tray_icon():
         log.exception(e, "Failed to initialize tray icon", expected=False)
 
 def main():
+    config = get_config()
+    
     username = config.get('ra_username')
     api_key = config.get('ra_api_key')
-    client_id = config.get('discord_client_id')
+    client_id = config.get('discord_client_id', 1337553980779266078)
 
     RPC = Presence(client_id)
     log.info("Connecting to Discord App...")
@@ -26,6 +28,10 @@ def main():
     log.success("Connected!")
 
     while True:
+        config = get_config()
+        client_id = config.get('discord_client_id', client_id)
+        RPC = update_rpc_client_id(client_id, RPC)
+        
         data = get_profile_data(username, api_key)
         game_data = get_game_data(username, data.get('LastGameID'), api_key)
         if not data or not game_data:
