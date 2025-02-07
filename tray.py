@@ -9,15 +9,38 @@ from utils.get_config import get_config
 
 icon = None
 
+def update_menu():
+    # Rebuild and apply the updated menu
+    icon.menu = generate_menu()
+    icon.update_menu()
+    return
 
 def set_sleeping_time(sleep_time: int) -> None:
     config = get_config()
     config["sleeping_time"] = sleep_time
     save_config(config)
     
-    # Rebuild and apply the updated menu
-    icon.menu = generate_menu()
-    icon.update_menu()
+    update_menu()
+    return
+
+
+activity_choices = {"retroachievements": 1337553980779266078, "retroarch": 1337553668148297818}
+
+def get_config_choice() -> str:
+    config = get_config()
+    for choice, client_id in activity_choices.items():
+        if client_id == config["discord_client_id"]:
+            return choice
+    return "retroachievements"
+
+def set_config_choice(choice: str) -> None:
+    choice = choice.lower()
+    config = get_config()
+    config["activity_title"] = choice
+    config["discord_client_id"] = activity_choices[choice]
+    save_config(config)
+    
+    update_menu()
     return
 
 
@@ -29,6 +52,10 @@ def generate_menu() -> pystray.Menu:
     
     return pystray.Menu(
         pystray.MenuItem(text('Options'), pystray.Menu(
+            pystray.MenuItem(text('Activity title'), pystray.Menu(
+                pystray.MenuItem(text('RetroAchievements'), lambda: set_config_choice('retroachievements'), checked=lambda item: get_config_choice() == 'retroachievements'),
+                pystray.MenuItem(text('RetroArch'), lambda: set_config_choice('retroarch'), checked=lambda item: get_config_choice() == 'retroarch'),
+            )),
             pystray.MenuItem(text('Change sleeping time'), pystray.Menu(
                 pystray.MenuItem(text('2s'), lambda: set_sleeping_time(2), checked=lambda item: config.get('sleeping_time', 10) == 2),
                 pystray.MenuItem(text('5s'), lambda: set_sleeping_time(5), checked=lambda item: config.get('sleeping_time', 10) == 5),

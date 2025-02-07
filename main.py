@@ -19,8 +19,6 @@ def main():
     username = config.get('ra_username')
     api_key = config.get('ra_api_key')
     client_id = config.get('discord_client_id')
-    if not client_id or client_id == "-1":
-        client_id = "1249693940299333642"
 
     RPC = Presence(client_id)
     log.info("Connecting to Discord App...")

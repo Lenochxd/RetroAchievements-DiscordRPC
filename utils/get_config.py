@@ -23,7 +23,7 @@ def setup_config():
     config = {
         'ra_username': username,
         'ra_api_key': api_key,
-        'discord_client_id': '-1',
+        'discord_client_id': '1337553980779266078', # RetroAchievements Discord App ID
         'sleeping_time': 10,
     }
 
