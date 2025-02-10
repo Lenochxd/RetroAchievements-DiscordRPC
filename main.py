@@ -4,6 +4,7 @@ from pypresence import Presence
 from utils import get_config, log, parse_args, get_arg, update_presence
 from utils.retroachievements import get_profile_data, get_game_data
 from utils.presence import update_presence, update_rpc_client_id
+from utils.setup_config import setup_config
 
 parse_args()
 
@@ -50,6 +51,9 @@ def main():
         time.sleep(get_arg("fetch"))
 
 if __name__ == "__main__":
+    # Start the config setup if needed
+    setup_config()
+    
     # Start the RPC thread
     rpc_thread = threading.Thread(target=main, daemon=True)
     rpc_thread.start()

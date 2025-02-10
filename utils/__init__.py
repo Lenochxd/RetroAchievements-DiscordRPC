@@ -1,4 +1,5 @@
-from .get_config import *
+from .get_config import get_config
+from .save_config import save_config
 from .retroachievements import *
 from .presence import *
 from .logger import log
