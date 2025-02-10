@@ -1,4 +1,5 @@
 import tkinter as tk
+import webbrowser
 from utils.retroachievements import get_profile_data
 from utils import get_config, save_config
 
@@ -29,6 +30,9 @@ def ra_infos_prompt():
     def close_prompt(event=None):
         prompt_window.destroy()
 
+    def open_api_key_page():
+        webbrowser.open("https://retroachievements.org/settings")
+
     config = get_config()
     
     prompt_window = tk.Tk()
@@ -53,12 +57,15 @@ def ra_infos_prompt():
     api_key_label = tk.Label(frame, text=text("API Key:"))
     api_key_label.grid(row=2, column=0, pady=5, sticky="w")
     
-    api_key_entry = tk.Entry(frame, validate="key")
+    api_key_entry = tk.Entry(frame, validate="key", width=10)
     api_key_entry.insert(0, config.get("ra_api_key"))  # Set default text field value to the current api key
-    api_key_entry.grid(row=3, column=0, pady=5, sticky="ew")
+    api_key_entry.grid(row=3, column=0, pady=5, sticky="w")
+    
+    find_api_key_button = tk.Button(frame, text=text("Find Key"), command=open_api_key_page)
+    find_api_key_button.grid(row=3, column=0, padx=0, pady=5, sticky="e")
     
     save_button = tk.Button(frame, text=text("save"), command=save_infos)
-    save_button.grid(row=4, column=0, pady=5, sticky="ew")
+    save_button.grid(row=4, column=0, columnspan=2, pady=5, sticky="ew")
 
     # Key bindings
     prompt_window.bind("<Return>", lambda _: save_infos())
