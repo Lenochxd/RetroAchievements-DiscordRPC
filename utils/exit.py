@@ -20,7 +20,7 @@ def exit_program(force=True, from_timeout=False):
 
         process_names_to_terminate = []
         if force:
-            process_names_to_terminate.append("RARPC.exe")
+            process_names_to_terminate.append("rarpc.exe")
             if not getattr(sys, 'frozen', False):
                 log.debug("Curently not running in a frozen state (not compiled). Adding python executables to termination list.")
                 os.kill(os.getpid(), signal.SIGINT)
