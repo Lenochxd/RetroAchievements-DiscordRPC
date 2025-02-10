@@ -29,6 +29,8 @@ def main():
 
     while True:
         config = get_config()
+        username = config.get('ra_username')
+        api_key = config.get('ra_api_key')
         client_id = config.get('discord_client_id', client_id)
         RPC = update_rpc_client_id(client_id, RPC)
         

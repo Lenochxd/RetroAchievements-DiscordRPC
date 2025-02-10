@@ -1,7 +1,9 @@
 import pystray
 import sys
 import webbrowser
+import tkinter as tk
 from PIL import Image
+from utils.retroachievements import get_profile_data
 from utils.exit import exit_program
 from utils.restart import restart_program
 from utils.save_config import save_config
@@ -42,7 +44,73 @@ def set_config_choice(choice: str) -> None:
     
     update_menu()
     return
+    
 
+def ra_infos_prompt():
+    def save_port():
+        new_username = username_entry.get()
+        new_api_key = api_key_entry.get()
+        
+        if not validate_inputs(new_username, new_api_key):
+            prompt_window.geometry("300x190")
+            error_label.config(text="Invalid username or API key", fg="red")
+            return
+        
+        prompt_window.destroy()  # Close the window if save is successful
+        
+        config = get_config()
+        config['ra_username'] = new_username
+        config['ra_api_key'] = new_api_key
+        save_config(config)
+        return
+
+    def validate_inputs(new_username: str, new_api_key: str) -> bool:
+        return bool(new_username and new_api_key and get_profile_data(new_username, new_api_key))
+
+    def close_prompt(event=None):
+        prompt_window.destroy()
+
+    config = get_config()
+    
+    prompt_window = tk.Tk()
+    prompt_window.title(text('Edit RetroAchievements Infos'))
+    prompt_window.geometry("300x180")
+    prompt_window.resizable(False, False)
+    prompt_window.iconbitmap("ra-icon.ico")
+
+    frame = tk.Frame(prompt_window, padx=10, pady=10)
+    frame.pack(expand=True)
+    
+    error_label = tk.Label(frame, text="", fg="red")
+    error_label.grid(row=5, column=0, pady=0, sticky="w")
+
+    username_label = tk.Label(frame, text=text("Username:"))
+    username_label.grid(row=0, column=0, pady=5, sticky="w")
+    
+    username_entry = tk.Entry(frame, validate="key")
+    username_entry.insert(0, config.get("ra_username"))  # Set default text field value to the current username
+    username_entry.grid(row=1, column=0, pady=5, sticky="ew")
+    
+    api_key_label = tk.Label(frame, text=text("API Key:"))
+    api_key_label.grid(row=2, column=0, pady=5, sticky="w")
+    
+    api_key_entry = tk.Entry(frame, validate="key")
+    api_key_entry.insert(0, config.get("ra_api_key"))  # Set default text field value to the current api key
+    api_key_entry.grid(row=3, column=0, pady=5, sticky="ew")
+    
+    save_button = tk.Button(frame, text=text("save"), command=save_port)
+    save_button.grid(row=4, column=0, pady=5, sticky="ew")
+
+    # Key bindings
+    prompt_window.bind("<Return>", lambda event: save_port())
+    prompt_window.bind("<Escape>", close_prompt)
+
+    # Focus the window and the first text input
+    prompt_window.lift()
+    prompt_window.focus_force()
+    username_entry.focus()
+
+    prompt_window.mainloop()
 
 def text(input):
     return input
@@ -52,6 +120,8 @@ def generate_menu() -> pystray.Menu:
     
     return pystray.Menu(
         pystray.MenuItem(text('Options'), pystray.Menu(
+            
+            pystray.MenuItem(text('Edit RA infos'), ra_infos_prompt),
             pystray.MenuItem(text('Activity title'), pystray.Menu(
                 pystray.MenuItem(text('RetroAchievements'), lambda: set_config_choice('retroachievements'), checked=lambda item: get_config_choice() == 'retroachievements'),
                 pystray.MenuItem(text('RetroArch'), lambda: set_config_choice('retroarch'), checked=lambda item: get_config_choice() == 'retroarch'),
