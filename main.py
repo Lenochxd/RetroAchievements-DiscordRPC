@@ -10,7 +10,7 @@ parse_args()
 
 
 def initialize_tray_icon():
-    from tray import create_tray_icon
+    from utils.ui.tray_icon import create_tray_icon
     try:
         create_tray_icon()
     except Exception as e:
