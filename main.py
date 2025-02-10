@@ -1,3 +1,5 @@
+import sys
+import ctypes
 import time
 import threading
 from pypresence import Presence
@@ -7,6 +9,29 @@ from utils.presence import update_presence, update_rpc_client_id
 from utils.setup_config import setup_config
 
 parse_args()
+
+def attach_console():
+    """
+    Attaches the current process to an existing console if running in a frozen state.
+    If the process is not frozen, the function returns immediately. If the process is frozen, it attempts to attach to
+    an existing console and redirects the standard output and error streams to the console.
+    Raises:
+        Exception: If there is an error attaching to the console.
+    """
+    if not getattr(sys, "frozen", False):
+        return
+    
+    try:
+        # Attach to an existing console
+        ctypes.windll.kernel32.AttachConsole(-1)
+        
+        # Redirect standard output and error to the console
+        sys.stdout = open("CONOUT$", "w")
+        sys.stderr = open("CONOUT$", "w")
+        
+        print()
+    except Exception as e:
+        print(f"Error attaching console: {e}")
 
 
 def initialize_tray_icon():
@@ -51,6 +76,8 @@ def main():
         time.sleep(get_arg("fetch"))
 
 if __name__ == "__main__":
+    attach_console()
+    
     # Start the config setup if needed
     setup_config()
     
