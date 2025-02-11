@@ -6,7 +6,7 @@ from utils.retroachievements import get_game_icon, get_console_icon
 config = get_config()
 
 def update_rpc_client_id(new_client_id: int, RPC: Presence) -> Presence:
-    if RPC and int(RPC.client_id) == new_client_id:
+    if RPC and int(RPC.client_id) == int(new_client_id):
         log.debug("Client ID hasn't changed, skipping...")
         return RPC
 
