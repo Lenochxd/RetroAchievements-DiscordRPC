@@ -1,11 +1,11 @@
-import pystray
+import os
 import sys
+import pystray
 import webbrowser
 from PIL import Image
+from utils import log, get_config, save_config
 from utils.exit import exit_program
 from utils.restart import restart_program
-from utils.save_config import save_config
-from utils.get_config import get_config
 from utils.ui.prompt_window import ra_infos_prompt
 
 icon = None
@@ -45,6 +45,32 @@ def set_config_choice(choice: str) -> None:
     return
 
 
+startup_path = os.path.join(os.getenv('APPDATA'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup', 'RARPC.lnk')
+
+def get_startup() -> bool:
+    if not getattr(sys, 'frozen', False):
+        return False
+
+    return os.path.exists(startup_path)
+
+def set_startup(startup: bool) -> None:
+    if not getattr(sys, 'frozen', False):
+        log.error("Cannot set startup option when not frozen.")
+        return
+
+    target_path = os.path.join(os.path.dirname(sys.executable), 'RARPC.exe')
+
+    if startup:
+        if not os.path.exists(startup_path):
+            os.symlink(target_path, startup_path)
+    else:
+        if os.path.exists(startup_path):
+            os.remove(startup_path)
+
+    update_menu()
+    return
+
+
 def text(input):
     return input
 
@@ -71,6 +97,7 @@ def generate_menu() -> pystray.Menu:
                 pystray.MenuItem(text('50s'), lambda: set_sleeping_time(50), checked=lambda item: config.get('sleeping_time', 10) == 50),
                 pystray.MenuItem(text('60s'), lambda: set_sleeping_time(60), checked=lambda item: config.get('sleeping_time', 10) == 60),
             )),
+            pystray.MenuItem(text('Start on Startup'), lambda: set_startup(not get_startup()), checked=lambda item: get_startup()),
         )),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem(text('Report an Issue'), lambda: webbrowser.open('https://github.com/Lenochxd/RetroAchievements-DiscordRPC/issues')),
