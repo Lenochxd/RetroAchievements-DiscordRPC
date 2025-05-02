@@ -16,6 +16,7 @@ def setup_config():
             'ra_api_key': "",
             'discord_client_id': '1337553980779266078', # RetroAchievements Discord App ID
             'sleeping_time': 10,
+            'presence_timeout': 10 * 60, # Time in seconds to keep presence if status doesn't update
         }
         
         with open(config_path, 'w') as config_file:

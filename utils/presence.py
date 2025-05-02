@@ -46,9 +46,38 @@ def get_state(data: dict) -> str | None:
 
 start_time = time.time()
 actual_game_title = ""
-    
+last_update_time = time.time()  # Track when data was last updated
+last_state = None  # Track the last state for comparison
+first_presence = True  # Flag to handle the first presence update
+state_updated_once = False  # Flag to track if the state has been updated at least once
+
 def update_presence(RPC, data, game_data):
-    global actual_game_title, start_time
+    global actual_game_title, start_time, last_update_time, last_state, first_presence, state_updated_once
+    
+    presence_timeout = config.get("presence_timeout", 0)
+    current_time = time.time()
+    current_state = get_state(data)
+    
+    # Handle first presence update
+    if first_presence:
+        if last_state is None:
+            last_state = current_state
+        if current_state and last_state and current_state != last_state:
+            state_updated_once = True  # Mark state as updated only if it changed from a valid previous state
+        if data.get("Status", "") == "Offline" and not state_updated_once:
+            log.debug("First presence is offline and state hasn't been updated, skipping...")
+            return
+        if not state_updated_once and data.get("Status", "") == "Offline":
+            return  # Wait for a valid state update
+        first_presence = False  # Allow updates after the first valid state
+    
+    # Check if timeout has been reached
+    if presence_timeout > 0 and (current_time - last_update_time) > presence_timeout:
+        if current_state == last_state:
+            log.debug(f"No status update in {presence_timeout} seconds, clearing presence...")
+            RPC.clear()
+            return
+    
     # Update start_time if the user changed game
     if game_data['GameTitle'] != actual_game_title:
         actual_game_title = game_data['GameTitle']
@@ -57,13 +86,16 @@ def update_presence(RPC, data, game_data):
     year_of_release = get_release_year(game_data['Released'])
     details = f"{game_data['GameTitle']} ({year_of_release})"
     
-    if data.get("Status", "") == "Offline":
-        log.debug("User is offline, clearing presence...")
-        RPC.clear()
+    if data.get("Status", "") == "Offline" and current_state == last_state:
+        log.debug("User is offline and state hasn't changed, skipping update...")
         return
     
+    # Update last_update_time and last_state as we've received valid data
+    last_update_time = current_time
+    last_state = current_state
+    
     RPC.update(
-        state=get_state(data),
+        state=current_state,
         details=details,
         start=start_time,
         large_image=get_game_icon(game_data),
