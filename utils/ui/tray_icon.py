@@ -71,6 +71,19 @@ def set_startup(startup: bool) -> None:
     return
 
 
+def get_force_presence() -> bool:
+    config = get_config()
+    return config.get("force_presence", False)
+
+def toggle_force_presence() -> None:
+    config = get_config()
+    config["force_presence"] = not config.get("force_presence", False)
+    save_config(config)
+    
+    update_menu()
+    return
+
+
 def text(input):
     return input
 
@@ -97,7 +110,8 @@ def generate_menu() -> pystray.Menu:
                 pystray.MenuItem(text('50s'), lambda: set_sleeping_time(50), checked=lambda item: config.get('sleeping_time', 10) == 50),
                 pystray.MenuItem(text('60s'), lambda: set_sleeping_time(60), checked=lambda item: config.get('sleeping_time', 10) == 60),
             )),
-            pystray.MenuItem(text('Start on Startup'), lambda: set_startup(not get_startup()), checked=lambda item: get_startup()),
+            pystray.MenuItem(text('Force presence'), lambda: toggle_force_presence(), checked=lambda item: get_force_presence()),
+            pystray.MenuItem(text('Start on Startup'), lambda: set_startup(not get_startup()), checked=lambda item: get_startup),
         )),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem(text('Report an Issue'), lambda: webbrowser.open('https://github.com/Lenochxd/RetroAchievements-DiscordRPC/issues')),

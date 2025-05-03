@@ -55,24 +55,26 @@ def update_presence(RPC, data, game_data):
     global actual_game_title, start_time, last_update_time, last_state, first_presence, state_updated_once
     
     presence_timeout = config.get("presence_timeout", 0)
+    force_presence = config.get("force_presence", False)  # Get the force_presence flag
     current_time = time.time()
     current_state = get_state(data)
     
     # Handle first presence update
-    if first_presence:
-        if last_state is None:
-            last_state = current_state
-        if current_state and last_state and current_state != last_state:
-            state_updated_once = True  # Mark state as updated only if it changed from a valid previous state
-        if data.get("Status", "") == "Offline" and not state_updated_once:
-            log.debug("First presence is offline and state hasn't been updated, skipping...")
-            return
-        if not state_updated_once and data.get("Status", "") == "Offline":
-            return  # Wait for a valid state update
-        first_presence = False  # Allow updates after the first valid state
+    if not force_presence:  # Skip first presence logic if force_presence is enabled
+        if first_presence:
+            if last_state is None:
+                last_state = current_state
+            if current_state and last_state and current_state != last_state:
+                state_updated_once = True  # Mark state as updated only if it changed from a valid previous state
+            if data.get("Status", "") == "Offline" and not state_updated_once:
+                log.debug("First presence is offline and state hasn't been updated, skipping...")
+                return
+            if not state_updated_once and data.get("Status", "") == "Offline":
+                return  # Wait for a valid state update
+            first_presence = False  # Allow updates after the first valid state
     
     # Check if timeout has been reached
-    if presence_timeout > 0 and (current_time - last_update_time) > presence_timeout:
+    if not force_presence and presence_timeout > 0 and (current_time - last_update_time) > presence_timeout:
         if current_state == last_state:
             log.debug(f"No status update in {presence_timeout} seconds, clearing presence...")
             RPC.clear()
@@ -86,7 +88,7 @@ def update_presence(RPC, data, game_data):
     year_of_release = get_release_year(game_data['Released'])
     details = f"{game_data['GameTitle']} ({year_of_release})"
     
-    if data.get("Status", "") == "Offline" and current_state == last_state:
+    if not force_presence and data.get("Status", "") == "Offline" and current_state == last_state:
         log.debug("User is offline and state hasn't changed, skipping update...")
         return
     
