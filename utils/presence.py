@@ -57,8 +57,14 @@ def update_presence(RPC, data, game_data):
     config = get_config()
     
     presence_timeout = config.get("presence_timeout", 0)
-    force_presence = get_arg("force") or config.get('force_presence', False)
+    current_force_presence = get_arg("force") or config.get('force_presence', False)
 
+    # Reset 
+    if not current_force_presence and first_presence:
+        first_presence = True
+        RPC.clear()
+
+    force_presence = current_force_presence
     current_time = time.time()
     current_state = get_state(data)
     
