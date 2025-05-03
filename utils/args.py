@@ -73,7 +73,9 @@ def parse_args():
     return parsed_args
 
 config_file_path = get_config_full_path()
-last_config_file_update = os.path.getmtime(config_file_path)
+last_config_file_update = (
+    os.path.getmtime(config_file_path) if os.path.exists(config_file_path) else 0
+)
 def load_args():
     """
     Load arguments from the temporary file if available, otherwise return an empty dictionary.
