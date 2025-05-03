@@ -32,6 +32,11 @@ def parse_args():
             "default": config.get('sleeping_time', 10),
             "action": "store"
         },
+        "-f": {
+            "aliases": ["--force"],
+            "help": "Force presence even if offline",
+            "action": "store_true"
+        },
     }
     
     # Set up argument parser

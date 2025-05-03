@@ -1,6 +1,7 @@
 import time
 from pypresence import Presence
 from utils import get_config, log
+from utils.args import get_arg
 from utils.retroachievements import get_game_icon, get_console_icon
 
 
@@ -56,7 +57,8 @@ def update_presence(RPC, data, game_data):
     config = get_config()
     
     presence_timeout = config.get("presence_timeout", 0)
-    force_presence = config.get("force_presence", False)  # Get the force_presence flag
+    force_presence = get_arg("force") or config.get('force_presence', False)
+
     current_time = time.time()
     current_state = get_state(data)
     
