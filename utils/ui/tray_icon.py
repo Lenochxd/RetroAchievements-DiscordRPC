@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 import pystray
 import webbrowser
 from PIL import Image
@@ -7,6 +8,7 @@ from utils import log, get_config, save_config
 from utils.exit import exit_program
 from utils.restart import restart_program
 from utils.ui.prompt_window import ra_infos_prompt
+from utils.updater import check_for_updates, get_actual_version, install_update
 
 icon = None
 
@@ -84,6 +86,34 @@ def toggle_force_presence() -> None:
     return
 
 
+updater_button_state = ""
+def get_updates_text() -> str:
+    global updater_button_state
+    
+    update_file = os.path.join(tempfile.gettempdir(), "RARPC_update.msi")
+    if os.path.exists(update_file):
+        updater_button_state = "installing"
+        return "Installing update..."
+    
+    actual_version = get_actual_version()
+    latest_version = check_for_updates()
+    if latest_version:
+        updater_button_state = "update-available"
+        return f"Update available: {actual_version} -> {latest_version}"
+    updater_button_state = "up-to-date"
+    return text('Check for updates')
+
+def check_install_update() -> None:
+    latest_version = check_for_updates()
+    if latest_version and updater_button_state == "update-available":
+        log.info(f"Installing update {latest_version}...")
+        install_update()
+        log.success("Update installed!")
+    
+    update_menu()
+    return
+
+
 def text(input):
     return input
 
@@ -114,6 +144,7 @@ def generate_menu() -> pystray.Menu:
             pystray.MenuItem(text('Start on Startup'), lambda: set_startup(not get_startup()), checked=lambda item: get_startup),
         )),
         pystray.Menu.SEPARATOR,
+        pystray.MenuItem(get_updates_text(), lambda: check_install_update()),
         pystray.MenuItem(text('Report an Issue'), lambda: webbrowser.open('https://github.com/Lenochxd/RetroAchievements-DiscordRPC/issues')),
         pystray.MenuItem(text('Restart'), restart_program),
         pystray.MenuItem(text('Quit'), lambda: exit_program()),

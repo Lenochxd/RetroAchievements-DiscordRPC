@@ -12,6 +12,7 @@ def setup_config():
 
     if not config:
         config = {
+            'github_repo': 'Lenochxd/RetroAchievements-DiscordRPC',
             'ra_username': "",
             'ra_api_key': "",
             'discord_client_id': '1337553980779266078', # RetroAchievements Discord App ID

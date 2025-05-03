@@ -11,7 +11,7 @@ start_time = time.time()
 
 sys.setrecursionlimit(10000)
 
-version_cache_file = "version-cache.txt"
+version_cache_file = "version.txt"
 
 # Check for version argument
 if "-v" in sys.argv or "--version" in sys.argv:

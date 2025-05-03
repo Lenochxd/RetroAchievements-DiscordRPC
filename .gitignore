@@ -14,7 +14,7 @@ dist/
 # Cache files
 __pycache__/
 *.pyc
-*-cache.*
+version.txt
 
 # backup files
 *copy.*
