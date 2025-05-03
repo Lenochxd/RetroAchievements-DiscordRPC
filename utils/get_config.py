@@ -11,3 +11,6 @@ def get_config() -> dict:
             config = yaml.safe_load(config_file)
     
     return config if config else {}
+
+def get_config_full_path() -> str:
+    return os.path.abspath(config_path)

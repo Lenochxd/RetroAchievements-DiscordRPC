@@ -1,33 +1,38 @@
 # Source: https://github.com/Lenochxd/WebDeck/blob/master/app/utils/args.py
 
+import os
 import sys
 import argparse
 from .logger import log
-from utils.get_config import get_config
+from utils.get_config import get_config, get_config_full_path
 
-config = get_config()
 args = {}
 raw_args = [arg for arg in sorted(sys.argv[1:]) if not (arg.endswith('.pyc') or arg.endswith('library.zip'))]
 # log.debug(f"{raw_args=}")
 
-available_args = {
-    "--debug": {
-        "aliases": ["-d"],
-        "help": "Print debug information",
-        "action": "store_true"
-    },
-    "-t": {
-        "aliases": ["--fetch", "--time"],
-        "help": "Time to sleep before fetches in seconds",
-        "type": int,
-        "default": config.get('sleeping_time', 10),
-        "action": "store"
-    },
-}
 
 parser, parsed_args = None, None
 def parse_args():
     global parser, parsed_args
+    
+    # Update the config
+    config = get_config()
+    
+    # Define available arguments
+    available_args = {
+        "--debug": {
+            "aliases": ["-d"],
+            "help": "Print debug information",
+            "action": "store_true"
+        },
+        "-t": {
+            "aliases": ["--fetch", "--time"],
+            "help": "Time to sleep before fetches in seconds",
+            "type": int,
+            "default": config.get('sleeping_time', 10),
+            "action": "store"
+        },
+    }
     
     # Set up argument parser
     parser = argparse.ArgumentParser()
@@ -67,7 +72,8 @@ def parse_args():
     
     return parsed_args
 
-
+config_file_path = get_config_full_path()
+last_config_file_update = os.path.getmtime(config_file_path)
 def load_args():
     """
     Load arguments from the temporary file if available, otherwise return an empty dictionary.
@@ -75,7 +81,16 @@ def load_args():
     Returns:
         dict: A dictionary containing the loaded arguments.
     """
-    global parsed_args
+    global parsed_args, last_config_file_update
+    
+    
+    if os.path.exists(config_file_path):
+        config_file_update_time = os.path.getmtime(config_file_path)
+        if config_file_update_time != last_config_file_update:
+            last_config_file_update = config_file_update_time
+            parsed_args = parse_args()
+    
+    
     if parsed_args:
         return vars(parsed_args)
     return {}

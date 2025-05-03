@@ -3,7 +3,6 @@ from pypresence import Presence
 from utils import get_config, log
 from utils.retroachievements import get_game_icon, get_console_icon
 
-config = get_config()
 
 def update_rpc_client_id(new_client_id: int, RPC: Presence) -> Presence:
     if RPC and int(RPC.client_id) == int(new_client_id):
@@ -53,6 +52,8 @@ state_updated_once = False  # Flag to track if the state has been updated at lea
 
 def update_presence(RPC, data, game_data):
     global actual_game_title, start_time, last_update_time, last_state, first_presence, state_updated_once
+    
+    config = get_config()
     
     presence_timeout = config.get("presence_timeout", 0)
     force_presence = config.get("force_presence", False)  # Get the force_presence flag
