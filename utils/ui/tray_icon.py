@@ -99,8 +99,8 @@ def generate_menu() -> pystray.Menu:
                 pystray.MenuItem(text('RetroArch'), lambda: set_config_choice('retroarch'), checked=lambda item: get_config_choice() == 'retroarch'),
             )),
             pystray.MenuItem(text('Change sleeping time'), pystray.Menu(
-                pystray.MenuItem(text('2s'), lambda: set_sleeping_time(2), checked=lambda item: config.get('sleeping_time', 10) == 2),
-                pystray.MenuItem(text('5s'), lambda: set_sleeping_time(5), checked=lambda item: config.get('sleeping_time', 10) == 5),
+                # pystray.MenuItem(text('2s'), lambda: set_sleeping_time(2), checked=lambda item: config.get('sleeping_time', 10) == 2),
+                # pystray.MenuItem(text('5s'), lambda: set_sleeping_time(5), checked=lambda item: config.get('sleeping_time', 10) == 5),
                 pystray.MenuItem(text('10s'), lambda: set_sleeping_time(10), checked=lambda item: config.get('sleeping_time', 10) == 10),
                 pystray.MenuItem(text('15s'), lambda: set_sleeping_time(15), checked=lambda item: config.get('sleeping_time', 10) == 15),
                 pystray.MenuItem(text('20s'), lambda: set_sleeping_time(20), checked=lambda item: config.get('sleeping_time', 10) == 20),
