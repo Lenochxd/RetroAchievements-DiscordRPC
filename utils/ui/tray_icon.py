@@ -141,7 +141,7 @@ def generate_menu() -> pystray.Menu:
                 pystray.MenuItem(text('60s'), lambda: set_sleeping_time(60), checked=lambda item: config.get('sleeping_time', 10) == 60),
             )),
             pystray.MenuItem(text('Force presence'), lambda: toggle_force_presence(), checked=lambda item: get_force_presence()),
-            pystray.MenuItem(text('Start on Startup'), lambda: set_startup(not get_startup()), checked=lambda item: get_startup),
+            pystray.MenuItem(text('Start on Startup'), lambda: set_startup(not get_startup()), checked=lambda item: get_startup()),
         )),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem(get_updates_text(), lambda: check_install_update()),
