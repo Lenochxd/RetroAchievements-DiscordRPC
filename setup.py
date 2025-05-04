@@ -48,6 +48,7 @@ def get_ignored_files():
                 if line.startswith("\\"):
                     line = line[1:]
                 ignored_files.append(line)
+    ignored_files.remove(version_cache_file)
 
     print("IGNORED:", ignored_files)
     return ignored_files
