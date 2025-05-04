@@ -2,6 +2,8 @@ import tkinter as tk
 import webbrowser
 from utils.retroachievements import get_profile_data
 from utils import get_config, save_config
+from utils.exit import exit_program
+from utils.logger import log
 
 def text(input):
     return input
@@ -32,6 +34,14 @@ def ra_infos_prompt():
 
     def open_api_key_page():
         webbrowser.open("https://retroachievements.org/settings")
+
+    def on_close():
+        if config.get("ra_username") == "" or config.get("ra_api_key") == "":
+            log.info("Prompt window closed without saving, RA infos not updated, exiting...")
+            exit_program()
+        else:
+            log.info("Prompt window closed without saving, RA infos not updated.")
+            prompt_window.destroy()
 
     config = get_config()
     
@@ -70,6 +80,8 @@ def ra_infos_prompt():
     # Key bindings
     prompt_window.bind("<Return>", lambda _: save_infos())
     prompt_window.bind("<Escape>", close_prompt)
+
+    prompt_window.protocol("WM_DELETE_WINDOW", on_close)
 
     # Focus the window and the first text input
     prompt_window.lift()
